@@ -1,3 +1,15 @@
+# Songdle
+
+A music guessing application built using `dioxus`.
+Inspired by heardle, but with a focus on more customisation and better song selection
+
+# Useful links
+
+```
+https://developer.spotify.com/documentation/web-api
+
+```
+
 # Development
 
 Your new jumpstart project includes basic organization with an organized `assets` folder and a `components` folder. 
