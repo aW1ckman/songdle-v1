@@ -2,7 +2,7 @@
 // need dioxus
 use dioxus::prelude::*;
 
-use views::{Blog, Home, Navbar};
+use views::{Blog, Home, Navbar, MainPage};
 
 /// Define a components module that contains all shared components for our app.
 mod components;
@@ -30,6 +30,10 @@ enum Route {
         // Fields of the route variant will be passed to the component as props. In this case, the blog component must accept
         // an `id` prop of type `i32`.
         Blog { id: i32 },
+        // Songdle route
+        #[route("/songdle")]
+        MainPage {},
+
 }
 
 // We can import assets in dioxus with the `asset!` macro. This macro takes a path to an asset relative to the crate root.
