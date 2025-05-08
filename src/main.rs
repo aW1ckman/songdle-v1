@@ -48,7 +48,10 @@ const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 fn main() {
     // The `launch` function is the main entry point for a dioxus app. It takes a component and renders it with the platform feature
     // you have enabled
-    dioxus::launch(App);
+    use crate::s_context::AppState;
+    dioxus::LaunchBuilder::new()
+    .with_context(AppState::new())
+    .launch(App);
 }
 
 /// App is the main component of our app. Components are the building blocks of dioxus apps. Each component is a function
@@ -69,4 +72,26 @@ fn App() -> Element {
         // the layouts and components for the active route.
         Router::<Route> {}
     }
+}
+
+
+mod s_context {
+
+    #[derive(Clone, PartialEq, Debug)]
+    pub struct AppState {
+        pub oauth: String,
+    }
+
+    impl AppState {
+        pub fn new() -> Self {
+            AppState {
+                oauth: String::from("Placeholder")
+            }
+        }
+
+        fn get_token() {
+
+        }
+    }
+
 }
