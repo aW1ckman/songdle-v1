@@ -7,4 +7,4 @@
 **/*.rs.bk
 
 # Temporary store for secrets during development
-*/etc/secret.json
+*/secret.json

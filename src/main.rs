@@ -83,16 +83,29 @@ mod s_context {
     pub struct AppState {
         pub oauth: String,
     }
+    fn get_token() -> String {
+        let file = std::fs::File::open("etc/secret.json");
+        match file {
+            Ok(file) => {
+                let data: serde_json::Value = serde_json::from_reader(file).unwrap_or_default();
+                let p = data.get("oauth").unwrap().as_str().unwrap().to_string();
+
+                println!("{}", p);
+                p
+            },
+            Err(e) => {
+                println!("Errors {e:?}");
+                String::new()
+            },
+        }
+
+    }
 
     impl AppState {
         pub fn new() -> Self {
             AppState {
-                oauth: String::from("Placeholder")
+                oauth: get_token()
             }
-        }
-
-        fn get_token() {
-            
         }
     }
 
