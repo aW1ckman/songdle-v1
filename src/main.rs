@@ -48,9 +48,11 @@ const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 fn main() {
     // The `launch` function is the main entry point for a dioxus app. It takes a component and renders it with the platform feature
     // you have enabled
-    use crate::s_context::AppState;
     dioxus::LaunchBuilder::new()
-    .with_context(AppState::new())
+    .with_context( server_only! {
+        #[cfg(feature = "server")]
+        crate::s_context::AppState::new()
+    })
     .launch(App);
 }
 
@@ -74,7 +76,7 @@ fn App() -> Element {
     }
 }
 
-
+#[cfg(feature = "server")]
 mod s_context {
 
     #[derive(Clone, PartialEq, Debug)]
@@ -90,7 +92,7 @@ mod s_context {
         }
 
         fn get_token() {
-
+            
         }
     }
 

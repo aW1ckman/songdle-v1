@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use crate::s_context::AppState;
 
 
 // #[cfg(feature = "server")]
@@ -17,6 +16,7 @@ pub async fn echo_server(input: String) -> Result<String, ServerFnError> {
     // The body of server function like this comment are only included on the server. If you have any server-only logic like
     // database queries, you can put it here. Any imports for the server function should either be imported inside the function
     // or imported under a `#[cfg(feature = "server")]` block.
+    use crate::s_context::AppState;
     let FromContext(context): FromContext<AppState> = extract().await?;
     Ok(input)
 }
