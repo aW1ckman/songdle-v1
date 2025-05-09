@@ -18,6 +18,7 @@ pub async fn echo_server(input: String) -> Result<String, ServerFnError> {
     // or imported under a `#[cfg(feature = "server")]` block.
     use crate::s_context::AppState;
     let FromContext(context): FromContext<AppState> = extract().await?;
+    println!("{:?}", context.db_client);
     Ok(format!("{input}{c}", c=context.oauth))
 }
 

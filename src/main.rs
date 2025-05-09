@@ -45,6 +45,7 @@ const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/styling/main.css");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 
+
 fn main() {
     // The `launch` function is the main entry point for a dioxus app. It takes a component and renders it with the platform feature
     // you have enabled
@@ -78,11 +79,14 @@ fn App() -> Element {
 
 #[cfg(feature = "server")]
 mod s_context {
+    use std::sync::Arc;
 
-    #[derive(Clone, PartialEq, Debug)]
+    #[derive(Clone, Debug)]
     pub struct AppState {
         pub oauth: String,
+        pub db_client: Arc<aws_sdk_dynamodb::Client>,
     }
+
     fn get_token() -> String {
         let file = std::fs::File::open("etc/secret.json");
         match file {
@@ -101,10 +105,31 @@ mod s_context {
 
     }
 
+    fn create_dynamo_client() -> Arc<aws_sdk_dynamodb::Client> {
+        use aws_config::meta::region::RegionProviderChain;
+        use aws_config::BehaviorVersion;
+        use aws_sdk_dynamodb::Client;
+        
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        let client = rt.block_on(async {
+            let reigon_provider = RegionProviderChain::default_provider().or_else("eu-west-2");
+
+            let config = aws_config::defaults(BehaviorVersion::latest())
+            .region(reigon_provider)
+            .load()
+            .await;
+
+            Client::new(&config)
+        });
+        println!("Client created");
+        Arc::new(client)
+    }
+
     impl AppState {
         pub fn new() -> Self {
             AppState {
-                oauth: get_token()
+                oauth: get_token(),
+                db_client: create_dynamo_client()
             }
         }
     }
