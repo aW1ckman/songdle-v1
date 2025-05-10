@@ -91,34 +91,25 @@ mod s_context {
         let file_path = "etc/secret.json";
         let file: Result<std::fs::File, std::io::Error> = std::fs::File::open(file_path);
         let mut token = String::new();
-        match file {
-            Ok(file) => {
-                let data: Result<serde_json::Value, serde_json::Error> = serde_json::from_reader(file);
-                match data {
-                    Ok(data) => {
-                        let data = data.get("oauth");
-                        match data {
-                            Some(data) => {
-                                let data = data.as_str().unwrap().to_string();
-                                println!("OAUTH token: {}", data);
-                                token = data;
-                            },
-                            None => {
-                                println!("No oauth field found in secret");
-                            },
-                        }
-                    }
-                    Err(e) => {
-                        println!("Cannot serialize dasecret\n{e:?}");
-                    }
+
+        if let Ok(file) = file {
+            let data: Result<serde_json::Value, serde_json::Error> = serde_json::from_reader(file);
+            if let Ok(data) = data {
+                let data = data.get("oauth");
+                if let Some(data) = data {
+                    let data = data.as_str().unwrap().to_string();
+                    println!("OAUTH token: {}", data);
+                    token = data;
+                } else {
+                    println!("No oauth field found in secret");
                 }
-            },
-            Err(e) => {
-                println!("Cannot read path {file_path}\n{e:?}");
-            },
+            } else {
+                println!("Cannot serialize secret data");
+            }
+        } else {
+            println!("Cannot read path {file_path}");
         }
         token
-
     }
 
     fn create_dynamo_client() -> Arc<aws_sdk_dynamodb::Client> {
