@@ -88,20 +88,36 @@ mod s_context {
     }
 
     fn get_token() -> String {
-        let file = std::fs::File::open("etc/secret.json");
+        let file_path = "etc/secret.json";
+        let file: Result<std::fs::File, std::io::Error> = std::fs::File::open(file_path);
+        let mut token = String::new();
         match file {
             Ok(file) => {
-                let data: serde_json::Value = serde_json::from_reader(file).unwrap_or_default();
-                let p = data.get("oauth").unwrap().as_str().unwrap().to_string();
-
-                println!("{}", p);
-                p
+                let data: Result<serde_json::Value, serde_json::Error> = serde_json::from_reader(file);
+                match data {
+                    Ok(data) => {
+                        let data = data.get("oauth");
+                        match data {
+                            Some(data) => {
+                                let data = data.as_str().unwrap().to_string();
+                                println!("OAUTH token: {}", data);
+                                token = data;
+                            },
+                            None => {
+                                println!("No oauth field found in secret");
+                            },
+                        }
+                    }
+                    Err(e) => {
+                        println!("Cannot serialize dasecret\n{e:?}");
+                    }
+                }
             },
             Err(e) => {
-                println!("Errors {e:?}");
-                String::new()
+                println!("Cannot read path {file_path}\n{e:?}");
             },
         }
+        token
 
     }
 
